@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: productor-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: productor
+      POSTGRES_PASSWORD: productor123
+      POSTGRES_DB: productor
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U productor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rustfs:
+    image: ghcr.io/for.stORAGE/rustfs:latest
+    container_name: productor-rustfs
+    restart: unless-stopped
+    environment:
+      RUSTFS_PORT: 9000
+      RUSTFS_ACCESS_KEY: admin
+      RUSTFS_SECRET_KEY: rustfs123
+      RUSTFS_BUCKET: productor
+      RUSTFS_REGION: default
+    ports:
+      - "9000:9000"
+    volumes:
+      - rustfs_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  rustfs_data:
