@@ -1,4 +1,4 @@
-# Productor - 任务分发平台
+# TaskManager - 任务分发平台
 
 一个现代化的任务分发平台，支持团队协作、任务管理、实时通知等功能。
 
@@ -21,7 +21,7 @@
 ## 项目结构
 
 ```
-productor/
+taskManager/
 ├── apps/
 │   ├── api/              # NestJS 后端应用
 │   │   └── src/

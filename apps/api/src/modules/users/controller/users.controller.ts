@@ -1,7 +1,7 @@
 import { Controller, Get, Patch, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from '../service';
 import { JwtAuthGuard, RolesGuard, Roles, CurrentUser, Public } from '../../auth';
-import { UserRole, UserPublic, PaginatedResult } from '@productor/shared';
+import { UserRole, UserPublic, PaginatedResult } from '@taskmanager/shared';
 import { UpdateProfileDto, UpdateRoleDto, ListUsersDto } from '../dto';
 
 @Controller('api/users')

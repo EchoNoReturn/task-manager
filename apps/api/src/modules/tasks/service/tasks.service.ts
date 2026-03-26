@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from '../entities';
-import { TaskStatus, TaskType, TASK_HIERARCHY, PaginatedResult, ScheduleResult, TASK_CLAIM_DEADLINE_MINUTES } from '@productor/shared';
+import { TaskStatus, TaskType, TASK_HIERARCHY, PaginatedResult, ScheduleResult, TASK_CLAIM_DEADLINE_MINUTES } from '@taskmanager/shared';
 import { CreateTaskDto, UpdateTaskDto, UpdateStatusDto, AssignTaskDto, ListTasksDto } from '../dto';
 
 @Injectable()

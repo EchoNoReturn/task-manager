@@ -1,5 +1,5 @@
 import { IsString, IsEnum, IsOptional, IsObject } from 'class-validator';
-import { CommentType } from '@productor/shared';
+import { CommentType } from '@taskmanager/shared';
 
 export class CreateCommentDto {
   @IsString()

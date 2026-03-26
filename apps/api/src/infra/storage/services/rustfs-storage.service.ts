@@ -31,7 +31,7 @@ export class RustFSStorageService implements IStorageService {
       forcePathStyle: true,
     });
 
-    this.bucket = this.config.get<string>('STORAGE_BUCKET', 'productor');
+    this.bucket = this.config.get<string>('STORAGE_BUCKET', 'taskmanager');
     this.maxFileSize = this.config.get<number>('MAX_FILE_SIZE', 10 * 1024 * 1024);
     this.allowedMimeTypes = this.config
       .get<string>('ALLOWED_MIME_TYPES', 'image/png,image/jpeg,image/gif,application/pdf')

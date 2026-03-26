@@ -7,7 +7,7 @@
 ## 项目结构：Monorepo（pnpm workspace）
 
 ```
-productor/
+taskManager/
 ├── pnpm-workspace.yaml
 ├── package.json
 ├── docker-compose.yml              # PostgreSQL + RustFS

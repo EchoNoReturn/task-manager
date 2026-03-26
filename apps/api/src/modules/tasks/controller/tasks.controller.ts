@@ -3,7 +3,7 @@ import { TasksService } from '../service';
 import { JwtAuthGuard, CurrentUser, Public } from '../../auth';
 import { Task } from '../entities';
 import { CreateTaskDto, UpdateTaskDto, UpdateStatusDto, AssignTaskDto, ListTasksDto } from '../dto';
-import { PaginatedResult, ScheduleResult } from '@productor/shared';
+import { PaginatedResult, ScheduleResult } from '@taskmanager/shared';
 
 @Controller('api/tasks')
 @UseGuards(JwtAuthGuard)

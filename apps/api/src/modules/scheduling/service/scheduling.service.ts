@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from '../../tasks/entities';
-import { TaskStatus, NotificationType } from '@productor/shared';
+import { TaskStatus, NotificationType } from '@taskmanager/shared';
 import { NotificationsService } from '../../notifications/service/notifications.service';
 
 @Injectable()

@@ -1,14 +1,24 @@
-import { useEffect, useState, useCallback } from 'react';
-import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
-import { Card, Segmented } from 'antd';
-import dayjs from 'dayjs';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import api from '../api';
+import { useEffect, useState, useCallback } from "react";
+import {
+  Calendar as BigCalendar,
+  dateFnsLocalizer,
+  Views,
+} from "react-big-calendar";
+import { Card, Segmented } from "antd";
+import dayjs from "dayjs";
+import localeData from "dayjs/plugin/localeData";
+import api from "../api";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+dayjs.extend(localeData);
 
 const localizer = dateFnsLocalizer({
-  format: dayjs.dateFormat,
-  locales: { 'zh-CN': dayjs.localeData() },
-  defaultLocale: 'zh-CN',
+  format: (date: Date, formatString: string) =>
+    dayjs(date).format(formatString),
+  startOfWeek: () => dayjs().startOf("week").toDate(),
+  getNow: () => dayjs().toDate(),
+  locales: { "zh-CN": dayjs },
+  defaultLocale: "zh-CN",
 });
 
 interface Task {
@@ -18,7 +28,7 @@ interface Task {
   dueDate: string | null;
 }
 
-type ViewType = 'month' | 'week';
+type ViewType = "month" | "week";
 
 export function CalendarPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -27,9 +37,9 @@ export function CalendarPage() {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const start = dayjs(date).startOf('month').toISOString();
-      const end = dayjs(date).endOf('month').toISOString();
-      const { data } = await api.get('/tasks', {
+      const start = dayjs(date).startOf("month").toISOString();
+      const end = dayjs(date).endOf("month").toISOString();
+      const { data } = await api.get("/tasks", {
         params: { limit: 500 },
       });
       const filtered = data.data.filter((task: Task) => {
@@ -39,7 +49,7 @@ export function CalendarPage() {
       });
       setTasks(filtered);
     } catch (error) {
-      console.error('Failed to fetch tasks:', error);
+      console.error("Failed to fetch tasks:", error);
     }
   }, [date]);
 
@@ -61,15 +71,15 @@ export function CalendarPage() {
       extra={
         <Segmented
           options={[
-            { label: '月', value: 'month' },
-            { label: '周', value: 'week' },
+            { label: "月", value: "month" },
+            { label: "周", value: "week" },
           ]}
           value={view}
           onChange={(value) => setView(value as ViewType)}
         />
       }
     >
-      <BigCalendar
+      {/* <BigCalendar
         localizer={localizer}
         events={events}
         startAccessor="start"
@@ -81,10 +91,11 @@ export function CalendarPage() {
         style={{ height: 600 }}
         eventPropGetter={(event) => ({
           style: {
-            backgroundColor: event.resource.status === 'completed' ? '#52c41a' : '#1890ff',
+            backgroundColor:
+              event.resource.status === "completed" ? "#52c41a" : "#1890ff",
           },
         })}
-      />
+      /> */}
     </Card>
   );
 }

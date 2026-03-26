@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities';
 import { RegisterDto, LoginDto } from '../dto';
-import { JwtPayload, TokenPair } from '@productor/shared';
+import { JwtPayload, TokenPair } from '@taskmanager/shared';
 
 @Injectable()
 export class AuthService {

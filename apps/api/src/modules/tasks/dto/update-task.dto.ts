@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsDateString, IsEnum } from 'class-validator';
-import { TaskStatus, TaskType } from '@productor/shared';
+import { TaskStatus, TaskType } from '@taskmanager/shared';
 
 export class UpdateTaskDto {
   @IsOptional()

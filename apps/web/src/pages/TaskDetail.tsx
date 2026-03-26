@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Card, Descriptions, Tag, Button, Space, Modal, Select, message, List, Avatar } from 'antd';
 import { UserOutlined, TeamOutlined } from '@ant-design/icons';
 import api from '../api';
@@ -27,7 +27,6 @@ const { Option } = Select;
 
 export function TaskDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [task, setTask] = useState<Task | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);

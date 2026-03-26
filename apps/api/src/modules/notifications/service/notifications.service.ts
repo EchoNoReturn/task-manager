@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from '../entities';
-import { NotificationType } from '@productor/shared';
+import { NotificationType } from '@taskmanager/shared';
 
 @Injectable()
 export class NotificationsService {

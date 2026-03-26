@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { NotificationType } from '@productor/shared';
+import { NotificationType } from '@taskmanager/shared';
 import { User } from '../../auth/entities';
 
 @Entity('notifications')
@@ -23,10 +23,10 @@ export class Notification {
   @Column({ type: 'text' })
   message: string;
 
-  @Column({ name: 'related_task_id', nullable: true })
+  @Column({ name: 'related_task_id', type: 'varchar', length: 36, nullable: true })
   relatedTaskId: string | null;
 
-  @Column({ name: 'related_user_id', nullable: true })
+  @Column({ name: 'related_user_id', type: 'varchar', length: 36, nullable: true })
   relatedUserId: string | null;
 
   @Column({ name: 'is_read', default: false })

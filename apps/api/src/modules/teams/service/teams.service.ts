@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Team, TeamMember, TeamMemberRole } from '../entities';
 import { CreateTeamDto, UpdateTeamDto, AddMemberDto, UpdateMemberRoleDto } from '../dto';
-import { TeamWithMembers } from '@productor/shared';
+import { TeamWithMembers } from '@taskmanager/shared';
 
 @Injectable()
 export class TeamsService {

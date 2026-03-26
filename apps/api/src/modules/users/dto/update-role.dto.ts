@@ -1,5 +1,5 @@
 import { IsEnum } from 'class-validator';
-import { UserRole } from '@productor/shared';
+import { UserRole } from '@taskmanager/shared';
 
 export class UpdateRoleDto {
   @IsEnum(UserRole)

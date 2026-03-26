@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { TaskStatus, TaskType } from '@productor/shared';
+import { TaskStatus, TaskType } from '@taskmanager/shared';
 import { User } from '../../auth/entities';
 import { Team } from '../../teams/entities';
 

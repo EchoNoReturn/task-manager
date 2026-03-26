@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from '../../auth/entities';
-import { UserRole, UserPublic, PaginatedResult } from '@productor/shared';
+import { UserRole, UserPublic, PaginatedResult } from '@taskmanager/shared';
 import { UpdateProfileDto, UpdateRoleDto } from '../dto';
 
 @Injectable()
@@ -41,6 +42,10 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepo.findOne({ where: { email } });
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserPublic> {
@@ -89,6 +94,16 @@ export class UsersService {
     }
 
     user.deletedAt = new Date();
+    await this.userRepo.save(user);
+  }
+
+  async updatePassword(userId: string, newPassword: string): Promise<void> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('用户不存在');
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
     await this.userRepo.save(user);
   }
 }

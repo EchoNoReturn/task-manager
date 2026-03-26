@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -8,21 +8,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const isProduction = config.get<string>('NODE_ENV') === 'production';
+        const isProduction = config.get<string>("NODE_ENV") === "production";
+
+        const url = config.get<string>("DATABASE_URL");
+        console.log("DATABASE_URL:", url);
 
         return {
-          type: 'postgres',
-          url: config.get<string>('DATABASE_URL'),
-          host: config.get<string>('DB_HOST', 'localhost'),
-          port: config.get<number>('DB_PORT', 5432),
-          database: config.get<string>('DB_NAME', 'productor'),
-          username: config.get<string>('DB_USER', 'postgres'),
-          password: config.get<string>('DB_PASSWORD', ''),
+          type: "postgres",
+          url,
           autoLoadEntities: true,
           synchronize: !isProduction,
           migrationsRun: isProduction,
-          migrations: ['dist/database/migrations/*{.ts,.js}'],
-          poolSize: config.get<number>('DB_POOL_SIZE', 10),
+          migrations: ["dist/database/migrations/*{.ts,.js}"],
           logging: !isProduction,
         };
       },

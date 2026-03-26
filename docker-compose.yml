@@ -3,31 +3,32 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: productor-postgres
+    container_name: taskmanager-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: productor
-      POSTGRES_PASSWORD: productor123
-      POSTGRES_DB: productor
+      POSTGRES_USER: taskmanager
+      POSTGRES_PASSWORD: taskmanager123
+      POSTGRES_DB: taskmanager
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./apps/api/src/infra/database/sql/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U productor"]
+      test: ["CMD-SHELL", "pg_isready -U taskmanager"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   rustfs:
-    image: ghcr.io/for.stORAGE/rustfs:latest
-    container_name: productor-rustfs
+    image: rustfs/rustfs:latest
+    container_name: taskmanager-rustfs
     restart: unless-stopped
     environment:
       RUSTFS_PORT: 9000
       RUSTFS_ACCESS_KEY: admin
       RUSTFS_SECRET_KEY: rustfs123
-      RUSTFS_BUCKET: productor
+      RUSTFS_BUCKET: taskmanager
       RUSTFS_REGION: default
     ports:
       - "9000:9000"

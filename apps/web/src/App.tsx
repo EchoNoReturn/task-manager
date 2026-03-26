@@ -1,17 +1,18 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './stores/auth';
-import { Layout } from './components/Layout';
-import { LoginPage } from './pages/Login';
-import { DashboardPage } from './pages/Dashboard';
-import { TasksPage } from './pages/Tasks';
-import { TaskDetailPage } from './pages/TaskDetail';
-import { TaskNewPage } from './pages/TaskNew';
-import { TeamTasksPage } from './pages/TeamTasks';
-import { CalendarPage } from './pages/Calendar';
-import { AdminPage } from './pages/Admin';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "./stores/auth";
+import { Layout } from "./components/Layout";
+import { LoginPage } from "./pages/Login";
+import { DashboardPage } from "./pages/Dashboard";
+import { TasksPage } from "./pages/Tasks";
+import { TaskDetailPage } from "./pages/TaskDetail";
+import { TaskNewPage } from "./pages/TaskNew";
+import { TeamTasksPage } from "./pages/TeamTasks";
+import { CalendarPage } from "./pages/Calendar";
+import { AdminPage } from "./pages/Admin";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
+  console.log("isAuthenticated", isAuthenticated);
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

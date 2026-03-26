@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { CommentType } from '@productor/shared';
+import { CommentType } from '@taskmanager/shared';
 import { User } from '../../auth/entities';
 import { Task } from '../../tasks/entities';
 

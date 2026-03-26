@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from '../service';
 import { Public } from '../decorators';
-import { TokenPair } from '@productor/shared';
+import { TokenPair } from '@taskmanager/shared';
 import { RegisterDto, LoginDto, RefreshTokenDto, PasswordResetRequestDto, PasswordResetConfirmDto } from '../dto';
 
 @Controller('api/auth')
