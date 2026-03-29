@@ -7,14 +7,28 @@ import { TasksPage } from "./pages/Tasks";
 import { TaskDetailPage } from "./pages/TaskDetail";
 import { TaskNewPage } from "./pages/TaskNew";
 import { TeamTasksPage } from "./pages/TeamTasks";
+import { TeamLeadTasksPage } from "./pages/TeamLeadTasks";
 import { CalendarPage } from "./pages/Calendar";
 import { AdminPage } from "./pages/Admin";
+import { UsersPage } from "./pages/Users";
+import { TeamsPage } from "./pages/Teams";
+import { ArchivedTasksPage } from "./pages/ArchivedTasks";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
-  console.log("isAuthenticated", isAuthenticated);
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+}
+
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isAdmin } = useAuthStore();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
   }
   return <>{children}</>;
 }
@@ -36,8 +50,12 @@ export default function App() {
         <Route path="tasks/new" element={<TaskNewPage />} />
         <Route path="tasks/:id" element={<TaskDetailPage />} />
         <Route path="team-tasks" element={<TeamTasksPage />} />
+        <Route path="team-lead-tasks" element={<TeamLeadTasksPage />} />
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="archived-tasks" element={<ArchivedTasksPage />} />
         <Route path="admin" element={<AdminPage />} />
+        <Route path="users" element={<AdminRoute><UsersPage /></AdminRoute>} />
+        <Route path="teams" element={<AdminRoute><TeamsPage /></AdminRoute>} />
       </Route>
     </Routes>
   );
