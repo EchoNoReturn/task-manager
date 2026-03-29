@@ -91,6 +91,11 @@
       "sourceType": "github",
       "computedHash": "92ef5be1771e50cee00cd7713374dbde2d212a1dd0b6c07559ee98cc3ba95e71"
     },
+    "git-commit-cn": {
+      "source": "EchoNoReturn/yoyo-skills",
+      "sourceType": "github",
+      "computedHash": "8108ae9f60ba6417f2fe5fa6ec512acdcfe922b8796b2537adb71429fc7d6880"
+    },
     "jobs-to-be-done": {
       "source": "deanpeters/Product-Manager-Skills",
       "sourceType": "github",
