@@ -1,14 +1,189 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0a0a0b;
+  --color-bg-secondary: #111113;
+  --color-bg-elevated: #18181b;
+  --color-bg-card: #1c1c1f;
+
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+
+  --color-accent: #e11d48;
+  --color-accent-hover: #be123c;
+  --color-accent-foreground: #ffffff;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  --color-border: #27272a;
+  --color-border-subtle: #3f3f46;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --space-section: 112px;
+  --space-group: 64px;
+  --space-element: 24px;
+  --space-sm: 16px;
+  --space-xs: 8px;
+}
+
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+@layer components {
+  .btn-primary {
+    background-color: white;
+    color: black;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .btn-primary:disabled {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: white;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid white;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .card-hover {
+    transition: border-color 0.2s ease;
+  }
+
+  .card-hover:hover {
+    border-color: var(--color-border-subtle);
+  }
+
+  .section-padding {
+    padding-top: var(--space-section);
+    padding-bottom: var(--space-section);
+  }
+
+  .group-padding {
+    padding-top: var(--space-group);
+    padding-bottom: var(--space-group);
+  }
+
+  .input-field {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    width: 100%;
+    transition: border-color 0.2s ease;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .input-field::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-draft { background-color: rgba(113, 113, 122, 0.2); color: #a1a1aa; }
+  .status-pending { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+  .status-assigned { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+  .status-in_progress { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
+  .status-blocked { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+  .status-in_review { background-color: rgba(168, 85, 247, 0.2); color: #c084fc; }
+  .status-completed { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; }
+  .status-closed { background-color: rgba(113, 113, 122, 0.2); color: #71717a; }
+}
+
+html {
+  scroll-behavior: smooth;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Card, Table, Space, Tag, Select, Statistic, Row, Col } from 'antd';
+import { Table, Select } from 'antd';
+import { Users, CheckSquare, Clock } from 'lucide-react';
 import api from '../api';
 
 interface Task {
@@ -15,6 +16,27 @@ interface Overview {
   totalTasks: number;
   taskDistribution: Record<string, number>;
 }
+
+const statusConfig: Record<string, { label: string; class: string }> = {
+  draft: { label: '草稿', class: 'status-draft' },
+  pending: { label: '待认领', class: 'status-pending' },
+  assigned: { label: '已指派', class: 'status-assigned' },
+  in_progress: { label: '进行中', class: 'status-in_progress' },
+  blocked: { label: '受阻', class: 'status-blocked' },
+  in_review: { label: '审核中', class: 'status-in_review' },
+  completed: { label: '已完成', class: 'status-completed' },
+  closed: { label: '已关闭', class: 'status-closed' },
+};
+
+const statusOptions = [
+  { value: 'draft', label: '草稿' },
+  { value: 'pending', label: '待认领' },
+  { value: 'assigned', label: '已指派' },
+  { value: 'in_progress', label: '进行中' },
+  { value: 'in_review', label: '审核中' },
+  { value: 'completed', label: '已完成' },
+  { value: 'closed', label: '已关闭' },
+];
 
 export function AdminPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -47,68 +69,112 @@ export function AdminPage() {
     fetchData();
   }, [statusFilter]);
 
-  const statusColors: Record<string, string> = {
-    draft: 'default',
-    pending: 'orange',
-    assigned: 'blue',
-    in_progress: 'green',
-    blocked: 'red',
-    in_review: 'purple',
-    completed: 'green',
-    closed: 'gray',
-  };
-
   const columns = [
-    { title: '标题', dataIndex: 'title', key: 'title' },
+    {
+      title: '任务',
+      dataIndex: 'title',
+      key: 'title',
+      render: (title: string) => (
+        <span className="font-medium text-white">{title}</span>
+      ),
+    },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => <Tag color={statusColors[status]}>{status}</Tag>,
+      width: 140,
+      render: (status: string) => {
+        const config = statusConfig[status] || statusConfig.draft;
+        return <span className={`status-badge ${config.class}`}>{config.label}</span>;
+      },
     },
-    { title: '类型', dataIndex: 'type', key: 'type' },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+      width: 120,
+      render: (type: string) => (
+        <span className="text-[#a1a1aa]">{type}</span>
+      ),
+    },
   ];
 
-  return (
-    <Space direction="vertical" style={{ width: '100%' }} size="large">
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Statistic title="总用户数" value={overview?.totalUsers || 0} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="总任务数" value={overview?.totalTasks || 0} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="进行中任务" value={tasks.filter((t) => t.status === 'in_progress').length} />
-          </Card>
-        </Col>
-      </Row>
+  const inProgressCount = tasks.filter((t) => t.status === 'in_progress').length;
 
-      <Card title="任务列表">
-        <Space style={{ marginBottom: 16 }}>
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-white tracking-tight">
+          管理后台
+        </h1>
+        <p className="text-[#71717a] mt-1">
+          系统概览与任务管理
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="card p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-[#27272a]">
+              <Users size={24} className="text-[#e11d48]" />
+            </div>
+            <div>
+              <p className="text-[#71717a] text-sm">总用户数</p>
+              <p className="text-3xl font-bold text-white">{overview?.totalUsers || 0}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-[#27272a]">
+              <CheckSquare size={24} className="text-[#22c55e]" />
+            </div>
+            <div>
+              <p className="text-[#71717a] text-sm">总任务数</p>
+              <p className="text-3xl font-bold text-white">{overview?.totalTasks || 0}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-xl bg-[#27272a]">
+              <Clock size={24} className="text-[#f59e0b]" />
+            </div>
+            <div>
+              <p className="text-[#71717a] text-sm">进行中任务</p>
+              <p className="text-3xl font-bold text-white">{inProgressCount}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-white">任务列表</h2>
           <Select
             placeholder="筛选状态"
             allowClear
             value={statusFilter}
             onChange={setStatusFilter}
-            style={{ width: 150 }}
-          >
-            <Select.Option value="draft">草稿</Select.Option>
-            <Select.Option value="pending">待认领</Select.Option>
-            <Select.Option value="assigned">已指派</Select.Option>
-            <Select.Option value="in_progress">进行中</Select.Option>
-            <Select.Option value="in_review">审核中</Select.Option>
-            <Select.Option value="completed">已完成</Select.Option>
-            <Select.Option value="closed">已关闭</Select.Option>
-          </Select>
-        </Space>
-        <Table columns={columns} dataSource={tasks} rowKey="id" loading={loading} />
-      </Card>
-    </Space>
+            className="!w-40"
+            popupClassName="!bg-[#1c1c1f]"
+            options={statusOptions}
+          />
+        </div>
+        <Table
+          columns={columns}
+          dataSource={tasks}
+          rowKey="id"
+          loading={loading}
+          pagination={{
+            pageSize: 20,
+            showSizeChanger: false,
+          }}
+          className="[&_.ant-table]:!bg-transparent [&_.ant-table-thead>tr>th]:!bg-[#111113] [&_.ant-table-thead>tr>th]:!border-[#27272a] [&_.ant-table-tbody>tr>td]:!border-[#27272a] [&_.ant-table-tbody>tr:hover>td]:!bg-[rgba(255,255,255,0.02)]"
+        />
+      </div>
+    </div>
   );
 }

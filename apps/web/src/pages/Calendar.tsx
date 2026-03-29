@@ -1,101 +1,135 @@
-import { useEffect, useState, useCallback } from "react";
-import {
-  Calendar as BigCalendar,
-  dateFnsLocalizer,
-  Views,
-} from "react-big-calendar";
-import { Card, Segmented } from "antd";
-import dayjs from "dayjs";
-import localeData from "dayjs/plugin/localeData";
-import api from "../api";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import dayGridPluginDay from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { Segmented } from 'antd';
+import dayjs from 'dayjs';
 
-dayjs.extend(localeData);
-
-const localizer = dateFnsLocalizer({
-  format: (date: Date, formatString: string) =>
-    dayjs(date).format(formatString),
-  startOfWeek: () => dayjs().startOf("week").toDate(),
-  getNow: () => dayjs().toDate(),
-  locales: { "zh-CN": dayjs },
-  defaultLocale: "zh-CN",
-});
+import api from '../api';
 
 interface Task {
   id: string;
   title: string;
   status: string;
   dueDate: string | null;
+  startDate: string | null;
 }
 
-type ViewType = "month" | "week";
+type ViewType = 'dayGridMonth' | 'timeGridWeek' | 'dayGridDay';
 
 export function CalendarPage() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [view, setView] = useState<ViewType>(Views.MONTH);
+  const [view, setView] = useState<ViewType>('dayGridMonth');
   const [date, setDate] = useState(new Date());
 
   const fetchTasks = useCallback(async () => {
     try {
-      const start = dayjs(date).startOf("month").toISOString();
-      const end = dayjs(date).endOf("month").toISOString();
-      const { data } = await api.get("/tasks", {
+      let start: string;
+      let end: string;
+
+      if (view === 'dayGridDay') {
+        start = dayjs(date).startOf('day').toISOString();
+        end = dayjs(date).endOf('day').toISOString();
+      } else if (view === 'timeGridWeek') {
+        start = dayjs(date).startOf('week').toISOString();
+        end = dayjs(date).endOf('week').toISOString();
+      } else {
+        start = dayjs(date).startOf('month').toISOString();
+        end = dayjs(date).endOf('month').toISOString();
+      }
+
+      const { data } = await api.get('/tasks', {
         params: { limit: 500 },
       });
+
       const filtered = data.data.filter((task: Task) => {
-        if (!task.dueDate) return false;
-        const taskDate = dayjs(task.dueDate);
-        return taskDate.isAfter(start) && taskDate.isBefore(end);
+        const taskDate = task.dueDate || task.startDate;
+        if (!taskDate) return false;
+        return dayjs(taskDate).isAfter(dayjs(start).subtract(1, 'day')) && 
+               dayjs(taskDate).isBefore(dayjs(end).add(1, 'day'));
       });
       setTasks(filtered);
     } catch (error) {
-      console.error("Failed to fetch tasks:", error);
+      console.error('Failed to fetch tasks:', error);
     }
-  }, [date]);
+  }, [date, view]);
 
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
 
-  const events = tasks.map((task) => ({
-    id: task.id,
-    title: task.title,
-    start: new Date(task.dueDate!),
-    end: new Date(task.dueDate!),
-    resource: task,
-  }));
+  const events = tasks.map((task) => {
+    const taskDate = task.dueDate || task.startDate;
+    let backgroundColor = '#e11d48';
+    if (task.status === 'completed' || task.status === 'closed') {
+      backgroundColor = '#22c55e';
+    } else if (task.status === 'in_progress') {
+      backgroundColor = '#f59e0b';
+    }
+    return {
+      id: task.id,
+      title: task.title,
+      start: taskDate!,
+      backgroundColor,
+      borderColor: backgroundColor,
+    };
+  });
+
+  const handleEventClick = (info: any) => {
+    navigate(`/tasks/${info.event.id}`);
+  };
 
   return (
-    <Card
-      title="日历视图"
-      extra={
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            日历视图
+          </h1>
+          <p className="text-[#71717a] mt-1">
+            按日期查看任务安排
+          </p>
+        </div>
         <Segmented
           options={[
-            { label: "月", value: "month" },
-            { label: "周", value: "week" },
+            { label: '日', value: 'dayGridDay' },
+            { label: '周', value: 'timeGridWeek' },
+            { label: '月', value: 'dayGridMonth' },
           ]}
           value={view}
           onChange={(value) => setView(value as ViewType)}
+          className="[&_.ant-segmented-item-selected]:!bg-[#e11d48] [&_.ant-segmented-thumb]:!bg-[#e11d48]"
         />
-      }
-    >
-      {/* <BigCalendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        view={view}
-        onView={(v) => setView(v as ViewType)}
-        date={date}
-        onNavigate={setDate}
-        style={{ height: 600 }}
-        eventPropGetter={(event) => ({
-          style: {
-            backgroundColor:
-              event.resource.status === "completed" ? "#52c41a" : "#1890ff",
-          },
-        })}
-      /> */}
-    </Card>
+      </div>
+
+      <div className="card p-6">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, dayGridPluginDay, interactionPlugin]}
+          initialView={view}
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: '',
+          }}
+          events={events}
+          height={600}
+          dateClick={(info) => setDate(new Date(info.dateStr))}
+          datesSet={(info) => setDate(new Date(info.startStr))}
+          nowIndicator={true}
+          eventDisplay="block"
+          eventClick={handleEventClick}
+          eventTimeFormat={{
+            hour: 'numeric',
+            minute: '2-digit',
+            meridiem: 'short',
+          }}
+          dayMaxEvents={3}
+        />
+      </div>
+    </div>
   );
 }
