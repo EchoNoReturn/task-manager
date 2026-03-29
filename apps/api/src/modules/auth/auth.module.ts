@@ -8,6 +8,7 @@ import { AuthService } from './service';
 import { User } from './entities';
 import { JwtStrategy } from './strategies';
 import { JwtAuthGuard, RolesGuard } from './guards';
+import { SystemSettingsModule } from '../system-settings';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JwtAuthGuard, RolesGuard } from './guards';
         signOptions: { expiresIn: '15m' },
       }),
     }),
+    SystemSettingsModule,
   ],
   controllers: [AuthController],
   providers: [

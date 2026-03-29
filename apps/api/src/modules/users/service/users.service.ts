@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../auth/entities';
 import { UserRole, UserPublic, PaginatedResult } from '@taskmanager/shared';
-import { UpdateProfileDto, UpdateRoleDto } from '../dto';
+import { UpdateProfileDto, UpdateRoleDto, CreateUserDto } from '../dto';
 
 @Injectable()
 export class UsersService {
@@ -46,6 +46,32 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepo.findOne({ where: { email } });
+  }
+
+  async create(dto: CreateUserDto): Promise<UserPublic> {
+    const existing = await this.userRepo.findOne({ where: { email: dto.email } });
+    if (existing) {
+      throw new ConflictException('该邮箱已被注册');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const user = this.userRepo.create({
+      email: dto.email,
+      passwordHash,
+      nickname: dto.nickname,
+      role: dto.role ?? UserRole.MEMBER,
+    });
+
+    await this.userRepo.save(user);
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt,
+    };
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserPublic> {

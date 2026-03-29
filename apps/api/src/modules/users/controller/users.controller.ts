@@ -1,8 +1,8 @@
-import { Controller, Get, Patch, Delete, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Body, Query, UseGuards, Post } from '@nestjs/common';
 import { UsersService } from '../service';
 import { JwtAuthGuard, RolesGuard, Roles, CurrentUser, Public } from '../../auth';
 import { UserRole, UserPublic, PaginatedResult } from '@taskmanager/shared';
-import { UpdateProfileDto, UpdateRoleDto, ListUsersDto } from '../dto';
+import { UpdateProfileDto, UpdateRoleDto, ListUsersDto, CreateUserDto } from '../dto';
 
 @Controller('api/users')
 @UseGuards(JwtAuthGuard)
@@ -14,6 +14,13 @@ export class UsersController {
   @UseGuards(RolesGuard)
   async list(@Query() query: ListUsersDto): Promise<PaginatedResult<UserPublic>> {
     return this.usersService.findAll(query.page, query.limit);
+  }
+
+  @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  async create(@Body() dto: CreateUserDto): Promise<UserPublic> {
+    return this.usersService.create(dto);
   }
 
   @Get(':id')

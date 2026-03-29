@@ -10,7 +10,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() dto: RegisterDto): Promise<TokenPair> {
+  async register(@Body() dto: RegisterDto): Promise<{ success: boolean; message: string }> {
     return this.authService.register(dto);
   }
 

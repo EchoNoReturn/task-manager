@@ -14,6 +14,9 @@ import { FilesModule } from "./modules/files";
 import { CommentsModule } from "./modules/comments";
 import { NotificationsModule } from "./modules/notifications";
 import { SchedulingModule } from "./modules/scheduling";
+import { WorkHoursModule } from "./modules/work-hours";
+import { SystemSettingsModule } from "./modules/system-settings";
+import { DashboardModule } from "./modules/dashboard";
 import { JwtAuthGuard } from "./modules/auth/guards";
 
 @Module({
@@ -34,6 +37,9 @@ import { JwtAuthGuard } from "./modules/auth/guards";
     CommentsModule,
     NotificationsModule,
     SchedulingModule,
+    WorkHoursModule,
+    SystemSettingsModule,
+    DashboardModule,
   ],
   providers: [
     {
