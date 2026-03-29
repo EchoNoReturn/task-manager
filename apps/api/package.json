@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node -e \"require('dotenv').config({path:'../.env'}); require('child_process').spawn('nest', ['start','--watch'], {stdio:'inherit', cwd:process.cwd()})\"",
+    "dev": "nest start --watch",
     "build": "nest build",
     "start": "nest start",
     "start:prod": "node dist/main",
