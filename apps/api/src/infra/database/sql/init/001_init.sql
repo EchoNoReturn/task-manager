@@ -135,6 +135,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
     estimated_hours DECIMAL(10, 2),
     claim_deadline TIMESTAMP WITH TIME ZONE,
+    start_date TIMESTAMP WITH TIME ZONE,
+    end_date TIMESTAMP WITH TIME ZONE,
     due_date TIMESTAMP WITH TIME ZONE,
     created_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -149,8 +151,26 @@ CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_type ON tasks(type);
 CREATE INDEX IF NOT EXISTS idx_tasks_created_by ON tasks(created_by);
 CREATE INDEX IF NOT EXISTS idx_tasks_claim_deadline ON tasks(claim_deadline) WHERE claim_deadline IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_tasks_start_date ON tasks(start_date) WHERE start_date IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_tasks_end_date ON tasks(end_date) WHERE end_date IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date) WHERE due_date IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_tasks_deleted_at ON tasks(deleted_at) WHERE deleted_at IS NULL;
+
+-- 工时记录表
+CREATE TABLE IF NOT EXISTS task_work_hours (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    hours DECIMAL(10, 2) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_task_work_hours_task_id ON task_work_hours(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_work_hours_user_id ON task_work_hours(user_id);
+CREATE INDEX IF NOT EXISTS idx_task_work_hours_created_at ON task_work_hours(created_at DESC);
 
 -- 任务文件关联表
 CREATE TABLE IF NOT EXISTS task_files (
@@ -254,6 +274,16 @@ BEGIN
 END $$;
 
 -- =====================================================
+-- 系统设置表
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS system_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    key VARCHAR(50) NOT NULL UNIQUE,
+    value VARCHAR(50) NOT NULL DEFAULT 'open'
+);
+
+-- =====================================================
 -- 初始数据
 -- =====================================================
 
@@ -267,6 +297,11 @@ VALUES (
 )
 ON CONFLICT (email) DO NOTHING;
 
+-- 注册模式设置，默认开放注册
+INSERT INTO system_settings (key, value)
+VALUES ('registration_mode', 'open')
+ON CONFLICT (key) DO NOTHING;
+
 COMMENT ON TABLE users IS '用户表';
 COMMENT ON TABLE teams IS '团队表';
 COMMENT ON TABLE team_members IS '团队成员关联表';
@@ -274,3 +309,4 @@ COMMENT ON TABLE tasks IS '任务表';
 COMMENT ON TABLE task_files IS '任务文件关联表';
 COMMENT ON TABLE comments IS '评论表';
 COMMENT ON TABLE notifications IS '通知表';
+COMMENT ON TABLE task_work_hours IS '工时记录表';
