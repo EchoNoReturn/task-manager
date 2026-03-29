@@ -13,6 +13,16 @@ export class TeamsController {
     return this.teamsService.findAllByUser(userId);
   }
 
+  @Get('all')
+  async findAllForTask(): Promise<Team[]> {
+    return this.teamsService.findAllForTask();
+  }
+
+  @Get('leader-of')
+  async findAllWhereLeader(@CurrentUser('id') userId: string): Promise<Team[]> {
+    return this.teamsService.findAllWhereLeader(userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Team> {
     return this.teamsService.findById(id);

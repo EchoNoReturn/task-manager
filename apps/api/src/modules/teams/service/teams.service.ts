@@ -132,4 +132,65 @@ export class TeamsService {
       relations: ['user'],
     });
   }
+
+  async findAllForAdmin(): Promise<Team[]> {
+    return this.teamRepo.find({ where: { deletedAt: null as any } });
+  }
+
+  async findAllForTask(): Promise<Team[]> {
+    return this.teamRepo.find({ where: { deletedAt: null as any } });
+  }
+
+  async findAllWhereLeader(userId: string): Promise<Team[]> {
+    const memberships = await this.memberRepo.find({
+      where: { userId, role: TeamMemberRole.LEADER },
+      relations: ['team'],
+    });
+    return memberships.map(m => m.team);
+  }
+
+  async addMemberAsAdmin(teamId: string, dto: AddMemberDto): Promise<TeamMember> {
+    const team = await this.findById(teamId);
+
+    const existing = await this.memberRepo.findOne({
+      where: { teamId, userId: dto.userId },
+    });
+    if (existing) {
+      throw new ForbiddenException('该用户已是团队成员');
+    }
+
+    const member = this.memberRepo.create({
+      teamId,
+      userId: dto.userId,
+      role: dto.role,
+    });
+    return this.memberRepo.save(member);
+  }
+
+  async removeMemberAsAdmin(teamId: string, targetUserId: string): Promise<void> {
+    const team = await this.findById(teamId);
+
+    const member = await this.memberRepo.findOne({
+      where: { teamId, userId: targetUserId },
+    });
+    if (!member) {
+      throw new NotFoundException('成员不存在');
+    }
+
+    await this.memberRepo.remove(member);
+  }
+
+  async updateMemberRoleAsAdmin(teamId: string, targetUserId: string, dto: UpdateMemberRoleDto): Promise<TeamMember> {
+    const team = await this.findById(teamId);
+
+    const member = await this.memberRepo.findOne({
+      where: { teamId, userId: targetUserId },
+    });
+    if (!member) {
+      throw new NotFoundException('成员不存在');
+    }
+
+    member.role = dto.role;
+    return this.memberRepo.save(member);
+  }
 }
