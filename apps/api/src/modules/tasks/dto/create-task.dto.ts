@@ -19,8 +19,24 @@ export class CreateTaskDto {
   parentId?: string;
 
   @IsOptional()
+  @IsUUID()
+  assigneeId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  teamId?: string;
+
+  @IsOptional()
   @IsNumber()
   estimatedHours?: number;
+
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
 
   @IsOptional()
   @IsDateString()

@@ -30,4 +30,8 @@ export class ListTasksDto {
   @IsOptional()
   @IsUUID()
   teamId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  createdBy?: string;
 }

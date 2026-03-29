@@ -50,6 +50,12 @@ export class Task {
   @Column({ name: 'due_date', type: 'timestamp', nullable: true })
   dueDate: Date | null;
 
+  @Column({ name: 'start_date', type: 'timestamp', nullable: true })
+  startDate: Date | null;
+
+  @Column({ name: 'end_date', type: 'timestamp', nullable: true })
+  endDate: Date | null;
+
   @Column({ name: 'created_by' })
   createdBy: string;
 
@@ -65,4 +71,13 @@ export class Task {
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
+
+  @Column({ name: 'archived_at', type: 'timestamp', nullable: true })
+  archivedAt: Date | null;
+
+  @Column({ name: 'archive_reason', type: 'text', nullable: true })
+  archiveReason: string | null;
+
+  @Column({ name: 'archived_by', type: 'varchar', length: 255, nullable: true })
+  archivedBy: string | null;
 }
